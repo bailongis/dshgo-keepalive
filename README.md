@@ -3,7 +3,6 @@
 给 **DSH Go**（Android 手机 App）用的 root 后台保活模块：通过 phantom、Doze、省电策略与 watchdog 维持 App 和 `libproot` 引擎存活，被清理后自动拉起。
 
 > 包名：`io.github.ccch1mneyyy.dsh_app`  
-> 作者：**bailongis**  
 > 适用：SukiSU / KernelSU / Magisk（模块格式通用），需要 root  
 > 先说清楚：**没有任何模块能保证 App 绝对不被系统杀死**。强行停止、清理全部、LMK 内存回收都能杀；这个模块做的是“尽量保活 + 被清后尽快拉回来”。
 
