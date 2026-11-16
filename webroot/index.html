@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>DSH Keep Alive</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="brand">
+      <div class="logo">🐋</div>
+      <div>
+        <h1>DSH Keep Alive</h1>
+        <div class="sub">v1.3 · bailongis</div>
+      </div>
+    </div>
+    <button id="lock" class="lock" title="防清理锁定">🔓</button>
+  </header>
+
+  <section class="card status">
+    <div class="row between">
+      <span class="muted">运行状态</span>
+      <span id="badge" class="badge">读取中…</span>
+    </div>
+    <div class="grid">
+      <div><small>App</small><b id="app">—</b></div>
+      <div><small>引擎</small><b id="engine">—</b></div>
+      <div><small>Watchdog</small><b id="watchdog">—</b></div>
+    </div>
+    <div id="meta" class="meta">—</div>
+  </section>
+
+  <section class="card">
+    <h2>保活开关</h2>
+
+    <div class="row">
+      <div><b>关闭 phantom 限制</b><small>全局关闭 phantom 进程清理</small></div>
+      <label class="switch"><input id="phantom" type="checkbox"><i></i></label>
+    </div>
+
+    <div class="row">
+      <div><b>加入 Doze 白名单</b><small>只豁免 DSH，其他 App 仍正常 Doze</small></div>
+      <label class="switch"><input id="doze" type="checkbox"><i></i></label>
+    </div>
+
+    <div class="row">
+      <div><b>省电无限制</b><small>AppOps + active bucket + 后台放行</small></div>
+      <label class="switch"><input id="battery" type="checkbox"><i></i></label>
+    </div>
+
+    <div class="row">
+      <div><b>SwipeUpClean 保护</b><small>系统没有公开白名单，靠“被清后自动拉起”</small></div>
+      <label class="switch"><input id="swipe" type="checkbox"><i></i></label>
+    </div>
+
+    <div class="row">
+      <div><b>自动检查</b><small>按间隔检查 App / 引擎，掉了就拉起</small></div>
+      <label class="switch"><input id="autocheck" type="checkbox"><i></i></label>
+    </div>
+
+    <div class="row">
+      <div><b>检查间隔</b><small>30–3600 秒，改完立即生效</small></div>
+      <div class="inline">
+        <input id="interval" type="number" min="30" max="3600" step="10" inputmode="numeric">
+        <span>秒</span>
+        <button id="saveInterval" class="mini">保存</button>
+      </div>
+    </div>
+
+    <div class="row">
+      <div><b>显示高级设置</b><small>关闭后只保留常用开关（简洁模式）</small></div>
+      <label class="switch"><input id="showAdvanced" type="checkbox"><i></i></label>
+    </div>
+  </section>
+
+  <section id="advanced" class="card">
+    <h2>高级 / 系统设置</h2>
+    <div class="kv"><span>phantom 当前值</span><b id="phantomSetting">—</b></div>
+    <div class="kv"><span>max_phantom_processes</span><b id="maxPhantom">—</b></div>
+    <div class="kv"><span>standby bucket</span><b id="bucket">—</b></div>
+
+    <div class="btns">
+      <button id="apply" class="primary">应用全部</button>
+      <button id="check" class="ghost">立即检查</button>
+    </div>
+    <div class="btns">
+      <button id="launch" class="ghost">启动 DSH</button>
+      <button id="sys" class="ghost">系统应用设置</button>
+    </div>
+
+    <button id="showLog" class="link">查看最近日志</button>
+    <pre id="logBox" class="log hidden"></pre>
+    <p class="note">提示：HyperOS 的“最近任务锁定”由桌面/系统管理，模块无法用命令替你点；这里做的是 AppOps + Doze + active bucket + 被清后自动拉起。</p>
+  </section>
+
+  <footer>DSH Go · <span id="pkg">io.github.ccch1mneyyy.dsh_app</span></footer>
+</div>
+<script src="app.js"></script>
+</body>
+</html>
