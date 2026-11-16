@@ -106,4 +106,4 @@ su -c 'rm -rf /data/adb/modules/dsh_keepalive'
 
 ## 创作说明
 
-本模块由 **DeepSeek 辅助创作**：需求、系统行为确认、脚本与 WebUI 初稿在 DeepSeek 协助下完成，作者 **bailongis** 负责实际测试、调整与发布。
+本模块由 **DeepSeek 辅助创作**：需求、系统行为确认、脚本与 WebUI 初稿在 DeepSeek 协助下完成。
