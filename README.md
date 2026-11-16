@@ -1,4 +1,4 @@
-# DSH Keep Alive
+# DSH Go Keep Alive
 
 给 **DSH Go**（Android 手机 App）用的 root 后台保活模块：通过 phantom、Doze、省电策略与 watchdog 维持 App 和 `libproot` 引擎存活，被清理后自动拉起。
 
