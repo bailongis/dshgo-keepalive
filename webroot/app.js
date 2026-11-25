@@ -5,6 +5,8 @@
   const PKG = "io.github.ccch1mneyyy.dsh_app";
   const CTRL = "sh " + MOD + "/control.sh";
   const $ = (id) => document.getElementById(id);
+  const STRATEGY_LABEL = { auto: "自动", proot: "PRoot", tawcroot: "tawcroot" };
+  const BACKEND_LABEL = { none: "未检测到", auto: "自动（端口 3080）", proot: "PRoot", tawcroot: "tawcroot" };
   let state = {};
 
   function toast(msg) {
@@ -59,15 +61,46 @@
     const s = state;
     const appOk = !!s.app;
     const engOk = !!s.engine;
+    const backend = s.backend || "none";
+    const strategy = s.strategy || "auto";
+    const match = s.strategyMatch !== 0;
+
     const badge = $("badge");
     badge.className = "badge";
-    if (appOk && engOk) { badge.textContent = "正常"; badge.classList.add("ok"); }
-    else if (!appOk) { badge.textContent = "App 未运行"; badge.classList.add("bad"); }
-    else { badge.textContent = "引擎未运行"; badge.classList.add("warn"); }
+    if (!appOk) {
+      badge.textContent = "App 未运行";
+      badge.classList.add("bad");
+    } else if (!engOk) {
+      badge.textContent = "引擎未运行";
+      badge.classList.add("warn");
+    } else if (!match) {
+      badge.textContent = "策略不匹配";
+      badge.classList.add("warn");
+    } else {
+      badge.textContent = "运行正常";
+      badge.classList.add("ok");
+    }
 
     $("app").textContent = appOk ? "运行中" : "未运行";
     $("engine").textContent = engOk ? "运行中" : "未运行";
     $("watchdog").textContent = s.watchdog ? "运行中" : "未运行";
+    $("backend").textContent = BACKEND_LABEL[backend] || backend;
+
+    document.querySelectorAll('input[name="strategy"]').forEach((el) => {
+      const on = el.value === strategy;
+      el.checked = on;
+      const option = el.closest(".option");
+      if (option) option.classList.toggle("selected", on);
+    });
+
+    const hint = $("strategyHint");
+    if (backend === "none") {
+      hint.textContent = "未检测到运行中的容器";
+    } else if (match) {
+      hint.textContent = "检测到 " + (BACKEND_LABEL[backend] || backend);
+    } else {
+      hint.textContent = "检测到 " + (BACKEND_LABEL[backend] || backend) + "，与所选策略不一致";
+    }
 
     $("phantom").checked = !!s.phantom;
     $("doze").checked = !!s.doze;
@@ -80,12 +113,14 @@
     $("phantomSetting").textContent = s.phantomSetting || "—";
     $("maxPhantom").textContent = s.maxPhantom || "—";
     $("bucket").textContent = s.bucket || "—";
-    $("meta").textContent = "Doze: " + (s.dozeListed ? "已加入" : "未加入") +
-      " · bucket " + (s.bucket || "?") + " · phantom " + (s.phantomSetting || "?");
+    $("meta").textContent = "策略 " + (STRATEGY_LABEL[strategy] || strategy) +
+      " · Doze " + (s.dozeListed ? "已加入" : "未加入") +
+      " · bucket " + (s.bucket || "?") +
+      " · phantom " + (s.phantomSetting || "?");
 
     const locked = !!(s.swipe && s.battery && s.doze);
     const lock = $("lock");
-    lock.textContent = locked ? "🔒" : "🔓";
+    lock.textContent = locked ? "已锁定" : "锁定";
     lock.classList.toggle("on", locked);
 
     $("advanced").classList.toggle("hidden", !s.showAdvanced);
@@ -107,11 +142,20 @@
       await setKey("battery", 1);
       await setKey("doze", 1);
       await setKey("phantom", 1);
-      toast("已锁定：Doze + 省电无限制 + phantom + 自动拉起");
+      toast("已锁定：Doze、省电无限制、phantom 与自动拉起");
     }
   }
 
   $("lock").addEventListener("click", setLocked);
+
+  document.querySelectorAll('input[name="strategy"]').forEach((el) => {
+    el.addEventListener("change", async (e) => {
+      if (!e.target.checked) return;
+      const value = e.target.value;
+      await setKey("strategy", value);
+      toast("运行策略：" + (STRATEGY_LABEL[value] || value));
+    });
+  });
 
   [["phantom", "phantom"], ["doze", "doze"], ["battery", "battery"],
    ["swipe", "swipe"], ["autocheck", "autocheck"]].forEach(([id, key]) => {

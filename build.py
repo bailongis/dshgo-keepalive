@@ -5,8 +5,8 @@ import re
 import zipfile
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
-TOP_FILES = ("module.prop", "service.sh", "control.sh", "config.conf", "uninstall.sh")
-EXEC_FILES = {"service.sh", "control.sh", "uninstall.sh"}
+TOP_FILES = ("module.prop", "service.sh", "control.sh", "uninstall.sh", "customize.sh")
+EXEC_FILES = {"service.sh", "control.sh", "uninstall.sh", "customize.sh"}
 
 
 def main():

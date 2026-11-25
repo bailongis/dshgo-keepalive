@@ -1,11 +1,19 @@
 # DSH Go Keep Alive
 
-给 **DSH Go**（Android 手机 App）用的 root 后台保活模块：通过 phantom、Doze、省电策略与 watchdog 维持 App 和 `libproot` 引擎存活，被清理后自动拉起。
+给 **DSH Go**（Android 手机 App）用的 root 后台保活模块：通过 phantom 限制、Doze 白名单、省电策略和 watchdog，尽量维持 App 与容器引擎（`libproot` / `libtawcroot`）存活，并在被清理后尝试自动拉起。
 
 > 包名：`io.github.ccch1mneyyy.dsh_app`  
 > 作者：**bailongis**  
 > 适用：SukiSU / KernelSU / Magisk（模块格式通用），需要 root  
 > 先说清楚：**没有任何模块能保证 App 绝对不被系统杀死**。强行停止、清理全部、LMK 内存回收都能杀；这个模块做的是“尽量保活 + 被清后尽快拉回来”。
+
+## v1.4 新增：PRoot / tawcroot 双策略
+
+- WebUI 增加 **运行策略**：自动、PRoot、tawcroot 三选一
+- 自动模式同时识别 `libproot.so` 与 `libtawcroot.so`，适合不确定当前容器的情况
+- PRoot 模式只检测 `libproot.so`；tawcroot 模式只检测 `libtawcroot.so`
+- watchdog 读取同一份策略，被清理后仍按所选后端判断引擎是否掉线
+- WebUI 改为白色主题，去掉作者名，只保留功能信息
 
 ## v1.3 新增：WebUI 管理界面
 
@@ -13,6 +21,7 @@
 
 界面里可以：
 
+- 切换 **运行策略**：自动 / PRoot / tawcroot
 - 开关 **关闭 phantom 进程限制**
 - 开关 **加入 Doze 白名单**
 - 开关 **省电无限制**（AppOps + active bucket + 后台放行）
@@ -43,6 +52,7 @@ dsh_keepalive/
 配置在 `/data/adb/modules/dsh_keepalive/config.conf`：
 
 ```ini
+STRATEGY=auto
 PHANTOM=1
 DOZE=1
 BATTERY=1
@@ -51,6 +61,10 @@ AUTOCHECK=1
 INTERVAL=300
 SHOW_ADVANCED=1
 ```
+
+## 升级
+
+模块内置 `update.json`，KernelSU / SukiSU 管理器会直接提示新版本。升级包不包含 `config.conf`，你已有的策略、开关和间隔不会被覆盖；安装后按管理器提示重启即可，旧 watchdog 会被 `customize.sh` 和新的 `service.sh` 停掉。
 
 ## 安装
 
@@ -69,11 +83,11 @@ su -c 'sh /data/adb/modules/dsh_keepalive/service.sh'
 
 ```sh
 su -c 'cat /data/adb/modules/dsh_keepalive/watchdog.pid'
-su -c 'ps -A -o PID,PPID,ETIME,ARGS | grep -E "dsh_app|libproot"'
+su -c 'ps -A -o PID,PPID,ETIME,ARGS | grep -E "dsh_app|libproot|libtawcroot"'
 cat /sdcard/Download/DSH-Go/keepalive.log
 ```
 
-正常时：watchdog 的 PPID 是 1；能同时看到 `dsh_app` 与 `libproot`；日志有 `service.sh start`、`watchdog started`。
+正常时：watchdog 的 PPID 是 1；能同时看到 `dsh_app` 与 `libproot` 或 `libtawcroot`；日志有 `service.sh start`、`watchdog started`。
 
 WebUI 里点“立即检查”也会输出 `app=1 engine=1 watchdog=1`。
 

@@ -1,5 +1,22 @@
 # Changelog
 
+## v1.4.4
+- 修复 tawcroot 下把 watchdog 自身误判为引擎的问题：优先检查 3080 端口，再回退进程名。
+- 修复 strategyMatch 在 backend=auto 时误报“策略不匹配”。
+- service.sh 启动时清理所有旧 watchdog，不再只依赖可能过期的 pid 文件。
+- 关闭“被清理后自动拉起”时，同时恢复 START_FOREGROUND 与 set-inactive。
+- module.prop 作者改回 bailongis。
+- 增加 `update.json` 与 `updateJson`，KernelSU 管理器可直接检查更新。
+- 升级包不再覆盖 `config.conf`；`customize.sh` 会在安装时停掉旧 watchdog。
+
+## v1.4
+
+- WebUI 新增运行策略：自动 / PRoot / tawcroot
+- 自动模式同时识别 `libproot.so` 与 `libtawcroot.so`
+- watchdog 与 control.sh 共用策略配置，按所选后端判断引擎是否掉线
+- WebUI 改为白色主题，去掉作者名与无关装饰，只保留功能
+- `config.conf` 新增 `STRATEGY=auto`
+
 ## v1.3
 
 - 新增 WebUI 管理界面（`webroot/`），模块页点“打开”即可操作
