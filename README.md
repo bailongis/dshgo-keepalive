@@ -13,7 +13,7 @@
 - 自动模式同时识别 `libproot.so` 与 `libtawcroot.so`，适合不确定当前容器的情况
 - PRoot 模式只检测 `libproot.so`；tawcroot 模式只检测 `libtawcroot.so`
 - watchdog 读取同一份策略，被清理后仍按所选后端判断引擎是否掉线
-- WebUI 改为白色主题，去掉作者名，只保留功能信息
+- WebUI 改为白色主题；作者信息保留在 module.prop，界面只显示功能
 
 ## v1.3 新增：WebUI 管理界面
 
